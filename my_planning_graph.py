@@ -590,20 +590,19 @@ class PlanningGraph():
         n2pars = [parNode for parNode in node_s2.parents]
 
         for node_1 in n1pars:
-
             for node_2 in n2pars:
 
-                if node_1.is_mutex(node_2) or node_2.is_mutex(node_1):
-                    if ( node_s1 in node_1.effnodes and node_s2 in node_1.effnodes  ) or \
-                       ( node_s1 in node_2.effnodes and node_s2 in node_2.effnodes ):
-                       # If one parent action can achieve both states, should NOT be inconsistent-support mutex, even if parent actions are themselves mutex
-                        return False 
-                    else:
+                if node_1.is_mutex(node_2):
 
-                        return True
+                    if node_s1 in node_1.effnodes and node_s2 in node_1.effnodes or\
+                        node_s1 in node_2.effnodes and node_s2 in node_2.effnodes:
+                        return False
+
+                    return True
 
         
-                
+        return False
+
         # are n1 and n2 in the same path?        
         samePath = False
 

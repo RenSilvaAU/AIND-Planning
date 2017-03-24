@@ -71,19 +71,19 @@ class AirCargoProblem(Problem):
                         print("about to add: load: " + c + " to plane: "  + p + " at airport: " + a)
                         """
 
-
-
                         precond_pos = [expr("At({}, {})".format(c, a)),
                                        expr("At({}, {})".format(p, a)),
-                                       expr("Cargo({})".format(c)),
-                                       expr("Plane({})".format(p)),
-                                       expr("Airport({})".format(a)),]
+#                                       expr("Cargo({})".format(c)),
+#                                       expr("Plane({})".format(p)),
+#                                       expr("Airport({})".format(a)),
+                                       ]
                         precond_neg = []
                         effect_add = [expr("In({}, {})".format(c, p))]
                         effect_rem = [expr("At({}, {})".format(c, a))]
                         load = Action(expr("Load({}, {}, {})".format(c, p, a)),
                                      [precond_pos, precond_neg],
                                      [effect_add, effect_rem])
+
                         loads.append(load)
 
             return loads
@@ -108,9 +108,10 @@ class AirCargoProblem(Problem):
 
                         precond_pos = [expr("In({}, {})".format(c, p)),
                                        expr("At({}, {})".format(p, a)),
-                                       expr("Cargo({})".format(c)),
-                                       expr("Plane({})".format(p)),
-                                       expr("Airport({})".format(a)),]
+#                                       expr("Cargo({})".format(c)),
+#                                       expr("Plane({})".format(p)),
+#                                       expr("Airport({})".format(a)),
+                                       ]
                         precond_neg = []
                         effect_add = [expr("At({}, {})".format(c, a))]
                         effect_rem = [expr("In({}, {})".format(c, p))]
@@ -154,16 +155,28 @@ class AirCargoProblem(Problem):
         :return: list of Action objects
         """
         # TODO implement
+
+
         possible_actions = []
+        kb = PropKB()
+        kb.tell(decode_state(state, self.state_map).pos_sentence())
+      
+           
+        for action in self.actions_list:
 
+            is_possible = True
+            for clause in action.precond_pos:
+                if clause not in kb.clauses:
+                    is_possible = False
 
-        for c, action in zip (state, self.actions_list):
-            if c == 'T':
-                # print('Action is possible ' + action.name)
-                possible_actions.append(action)
-
+            for clause in action.precond_neg:
+                if clause in kb.clauses:
+                    is_possible = False
+            if is_possible:
+                possible_actions.append(action)        
 
         return possible_actions
+
 
     def result(self, state: str, action: Action):
         """ Return the state that results from executing the given
@@ -176,30 +189,6 @@ class AirCargoProblem(Problem):
         """
         # TODO implement
 
-        """
-        stAction = action.name + '('
-
-        for arg in action.args:
-            stAction = stAction + arg
-
-        stAction = stAction + ')'
-
-
-        print()
-        print('**************************************')
-        print('')
-        print('--------------------------------------')
-        print('Before -> {} '.format(state))
-        print('--------------------------------------')
-        for sts, st in zip(state, self.state_map):
-            if (sts == 'T'):
-              print('CAN DO {} '.format(st))
-            else:
-              print('...not {} '.format(st))
-
-        print('effect_add {} '.format(action.effect_add))
-        print('effect_rem {} '.format(action.effect_rem))
-        """
 
         new_state = FluentState([], [])
         old_state = decode_state(state, self.state_map)
@@ -218,16 +207,6 @@ class AirCargoProblem(Problem):
 
         new_state_st = encode_state(new_state, self.state_map)
 
-        """
-        print('--------------------------------------')
-        print('After -> {} '.format(new_state_st))
-        print('--------------------------------------')
-        for sts, st in zip(new_state_st, self.state_map):
-            if (sts == 'T'):
-              print('CAN DO {} '.format(st))
-            else:
-              print('...not {} '.format(st))
-        """
         
         return encode_state(new_state, self.state_map)
 
