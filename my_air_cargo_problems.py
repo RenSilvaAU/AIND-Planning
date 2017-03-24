@@ -175,6 +175,8 @@ class AirCargoProblem(Problem):
         :return: resulting state after action
         """
         # TODO implement
+
+        """
         stAction = action.name + '('
 
         for arg in action.args:
@@ -197,6 +199,7 @@ class AirCargoProblem(Problem):
 
         print('effect_add {} '.format(action.effect_add))
         print('effect_rem {} '.format(action.effect_rem))
+        """
 
         new_state = FluentState([], [])
         old_state = decode_state(state, self.state_map)
@@ -215,6 +218,7 @@ class AirCargoProblem(Problem):
 
         new_state_st = encode_state(new_state, self.state_map)
 
+        """
         print('--------------------------------------')
         print('After -> {} '.format(new_state_st))
         print('--------------------------------------')
@@ -223,7 +227,8 @@ class AirCargoProblem(Problem):
               print('CAN DO {} '.format(st))
             else:
               print('...not {} '.format(st))
-
+        """
+        
         return encode_state(new_state, self.state_map)
 
     def goal_test(self, state: str) -> bool:
