@@ -581,11 +581,10 @@ class PlanningGraph():
         :param node_s2: PgNode_s
         :return: bool
         '''
-        # TODO test for Inconsistent Support between nodes
+        # TODO test for Inconsistent Support between nodes -> DONE!
 
 
         # check if parents are mutex
-
         n1pars = [parNode for parNode in node_s1.parents]
         n2pars = [parNode for parNode in node_s2.parents]
 
@@ -594,18 +593,17 @@ class PlanningGraph():
 
                 if node_1.is_mutex(node_2):
 
-                    if node_s1 in node_1.effnodes and node_s2 in node_1.effnodes or\
+                    if node_s1 in node_1.effnodes and node_s2 in node_1.effnodes or \
                         node_s1 in node_2.effnodes and node_s2 in node_2.effnodes:
                         return False
-
-                    return True
+                    else:
+                        return True
 
         
         return False
 
         # are n1 and n2 in the same path?        
         samePath = False
-
 
         for n1par in n1pars:
             if n1par in n2pars:
@@ -635,17 +633,14 @@ class PlanningGraph():
         '''
         level_sum = 0
 
-        # TODO implement
-
-        # find the first level where a goal appears.
-
+        # TODO implement -> DONE!
 
         # for each goal in the problem, determine the level cost, then add them together
-
         for goal in self.problem.goal:
              
             level_found = 0 
 
+            # when goal is found, stop search
             found = False
 
             for l in range (0, len(self.s_levels) - 1 ):
@@ -654,15 +649,16 @@ class PlanningGraph():
 
                     if node.literal == goal:
 
-
                         level_found = l
+
+                        # found goal, stop search
                         found = True
                         break
 
                 if found:
                     break
 
-
             level_sum = level_sum + level_found
+            # now move on to the next goal
 
         return level_sum

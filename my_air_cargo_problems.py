@@ -72,11 +72,7 @@ class AirCargoProblem(Problem):
                         """
 
                         precond_pos = [expr("At({}, {})".format(c, a)),
-                                       expr("At({}, {})".format(p, a)),
-#                                       expr("Cargo({})".format(c)),
-#                                       expr("Plane({})".format(p)),
-#                                       expr("Airport({})".format(a)),
-                                       ]
+                                       expr("At({}, {})".format(p, a))]
                         precond_neg = []
                         effect_add = [expr("In({}, {})".format(c, p))]
                         effect_rem = [expr("At({}, {})".format(c, a))]
@@ -108,9 +104,6 @@ class AirCargoProblem(Problem):
 
                         precond_pos = [expr("In({}, {})".format(c, p)),
                                        expr("At({}, {})".format(p, a)),
-#                                       expr("Cargo({})".format(c)),
-#                                       expr("Plane({})".format(p)),
-#                                       expr("Airport({})".format(a)),
                                        ]
                         precond_neg = []
                         effect_add = [expr("At({}, {})".format(c, a))]
@@ -291,9 +284,8 @@ def air_cargo_p2() -> AirCargoProblem:
  
            expr('At(P1, SFO)'),
            expr('At(P2, JFK)'),
-           expr('At(P2, ATL)'),
-
-           ]
+           expr('At(P2, ATL)')]
+           
     neg = [expr('At(C2, SFO)'),
            expr('At(C2, ATL)'),
            expr('In(C2, P1)'),
