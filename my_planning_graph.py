@@ -449,25 +449,30 @@ class PlanningGraph():
         '''
         # TODO test for Inconsistent Effects between nodes
 
-
+        # positive effects
         node_1_effects_add = [node for node in node_a1.action.effect_add]
         node_2_effects_add = [node for node in node_a2.action.effect_add]
 
+        # negative effects
         node_1_effects_rem = [node for node in node_a1.action.effect_rem]
         node_2_effects_rem = [node for node in node_a2.action.effect_rem]
 
+        # check node 1's add effects
         for node_1_effect_add in node_1_effects_add:
+
+            # if they are in node 2's remove effetcs
             if node_1_effect_add in node_2_effects_rem:
                 return True
 
+        # check node 2's add effects
         for node_2_effect_add in node_2_effects_add:
+
+            # if they are in node 1's remove effetcs
             if node_2_effect_add in node_1_effects_rem:
                 return True
 
+        # no mutex found
         return False
-
-        # return(node_a2.action.effect_add == node_a1.action.effect_rem or
-        #       node_a1.action.effect_add == node_a2.action.effect_rem )
 
     def interference_mutex(self, node_a1: PgNode_a, node_a2: PgNode_a) -> bool:
         '''
@@ -483,19 +488,27 @@ class PlanningGraph():
         :param node_a2: PgNode_a
         :return: bool
         '''
-        # TODO test for Interference between nodes
+        # TODO test for Interference between nodes - DONE !!
 
+        # add effects
         node_1_effects_add = [node for node in node_a1.action.effect_add] 
         node_2_effects_add = [node for node in node_a2.action.effect_add]
 
+        # negation pre-conditions
         node_1_preconds_neg = [node for node in node_a1.action.precond_neg]
         node_2_preconds_neg = [node for node in node_a2.action.precond_neg]
 
+        # check node 1's add effects
         for node_1_effect_add in node_1_effects_add:
+
+            # if they are in node 2's negative precondition
             if node_1_effect_add in node_2_preconds_neg:
                 return True
 
+        # check node 2's add effects
         for node_2_effect_add in node_2_effects_add:
+
+            # if they are in node 1's negative precondition
             if node_2_effect_add in node_1_preconds_neg:
                 return True
 
@@ -516,18 +529,19 @@ class PlanningGraph():
         :return: bool
         '''
 
+        # TODO test for Competing Needs between nodes - DONE!!
+
         prenodes_1 = [node for node in node_a1.parents] 
         prenodes_2 = [node for node in node_a2.parents]
 
 
         for n1 in prenodes_1:
             for n2 in prenodes_2:
-                if n1.is_mutex(n2) : 
-
+                if n1.is_mutex(n2): 
                     return True
 
         return False
-        # TODO test for Competing Needs between nodes
+
 
 
     def update_s_mutex(self, nodeset: set):
@@ -583,48 +597,34 @@ class PlanningGraph():
         '''
         # TODO test for Inconsistent Support between nodes -> DONE!
 
-
-        # check if parents are mutex
+        # get parents
         n1pars = [parNode for parNode in node_s1.parents]
         n2pars = [parNode for parNode in node_s2.parents]
 
+        # check all parents, pairwise
         for node_1 in n1pars:
+
+            # if parent node 1 can produce both children, it is not mutex
+            if  node_s2 in node_1.children or \
+                node_s2 in node_1.effnodes or \
+                node_1  in node_s2.parents  :
+                                
+                return False
+            
             for node_2 in n2pars:
 
+                # if parent node 2 can produce both children, it is not mutex
+                if  node_s1 in node_2.children or \
+                    node_s1 in node_2.effnodes or \
+                    node_2  in node_s1.parents :
+                    return False
+
+                # now, finally, if parents are mutex, s nodes are mutex
                 if node_1.is_mutex(node_2):
+                    return True
 
-                    if node_s1 in node_1.effnodes and node_s2 in node_1.effnodes or \
-                        node_s1 in node_2.effnodes and node_s2 in node_2.effnodes:
-                        return False
-                    else:
-                        return True
-
-        
+        # could not find mutex parents
         return False
-
-        # are n1 and n2 in the same path?        
-        samePath = False
-
-        for n1par in n1pars:
-            if n1par in n2pars:
-                samePath = True
-
-        if not samePath:
-            # if actions are independent, they cannot be mutex
-            return False
-
-        
-        # let us look at all actions in the actions list
-        actions = [action for action in self.all_actions]
-
-
-        for action in actions:
-            actNode = PgNode_a(action) 
-
-            if node_s1 in actNode.effnodes and node_s2 in actNode.effnodes:
-                return False
-
-        return True
 
     def h_levelsum(self) -> int:
         '''The sum of the level costs of the individual goals (admissible if goals independent)
@@ -656,6 +656,7 @@ class PlanningGraph():
                         break
 
                 if found:
+                    # found goal, go out of this loop too
                     break
 
             level_sum = level_sum + level_found
