@@ -284,7 +284,7 @@ def air_cargo_p2() -> AirCargoProblem:
  
            expr('At(P1, SFO)'),
            expr('At(P2, JFK)'),
-           expr('At(P2, ATL)')]
+           expr('At(P3, ATL)')]
            
     neg = [expr('At(C2, SFO)'),
            expr('At(C2, ATL)'),
